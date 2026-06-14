@@ -186,7 +186,7 @@ class UserErrorSubstate extends MusicBeatSubstate
 	{
 		//43
 		var star = #if (CHECK_FOR_UPDATES || debug) "" #else "*" #end;
-		printToTrace('P-SLICE ${MainMenuState.pSliceVersion}$star  (${error.message})');
+		printToTrace('TIMOSHA ENGINE ${MainMenuState.timoshaEngineVersion}$star  (${error.message})');
 		textNextY += 35;
 		FlxTimer.wait(1 / 24, () ->
 		{
@@ -232,7 +232,7 @@ class UserErrorSubstate extends MusicBeatSubstate
 			printSpaceToTrace();
             printToTrace(getLogger());
 			if (isCritical)
-				printToTrace('REPORT TO GITHUB.COM/MIKOLKA9144/P-SLICE');
+				printToTrace('REPORT TO GITHUB.COM/MIKOLKA9144/TIMOSHA ENGINE');
 			else
 				printToTrace('');
 			if (isCritical)

@@ -10,13 +10,13 @@ class OutdatedState extends WarningState
 		final escape:String = (controls.mobileC) ? 'B' : 'ESCAPE';
 
 		var guh = "Sup "+bro+", looks like you're running an   \n
-		outdated version of P-Slice Engine (" + MainMenuState.pSliceVersion + "),\n
+		outdated version of Timosha Engine (" + MainMenuState.timoshaEngineVersion + "),\n
 		please update to " + newVersion + "!\n
 		Press "+escape+" to proceed anyway.\n
 		\n
 		Thank you for using the Engine!";
 		super(guh,() ->{
-			CoolUtil.browserLoad("https://github.com/Psych-Slice/P-Slice/releases");
+			CoolUtil.browserLoad("https://github.com/TheRealTimosha/FNF-TimoshaEngine/releases");
 			if(onExit != null) onExit();
 		},onExit,nextState);
 	}

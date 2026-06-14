@@ -5,15 +5,15 @@
 	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app unless="PROFILE_BUILD || mobile" title="Friday Night Funkin': P-Slice Engine"
-		file="PSliceEngine" packageName="com.mikolka9144.pslice" package="com.mikolka9144.pslice"
-		main="Main" version="3.4.2" company="mikolka9144" />
-	<app if="PROFILE_BUILD" title="P-Slice Engine Profiling build" file="PSliceEngine"
-		packageName="com.mikolka9144.testPslice" package="com.mikolka9144.testPslice" main="Main"
-		version="3.4.2" company="mikolka9144" />
-	<app if="mobile" unless="PROFILE_BUILD" title="P-Slice Engine" file="PSliceEngine"
-		packageName="com.mikolka9144.pslice" package="com.mikolka9144.pslice" main="Main"
-		version="3.4.2" company="mikolka9144" />
+	<app unless="PROFILE_BUILD" title="Friday Night Funkin': Timosha Engine"
+		file="TimoshaEngine" packageName="com.therealtimosha.timoshaengine" package="com.therealtimosha.timoshaengine"
+		main="Main" version="3.4.2" company="therealtimosha" />
+	<app if="PROFILE_BUILD" title="Timosha Engine Profiling Build" file="TimoshaEngine"
+		packageName="com.therealtimosha.testTimoshaengine" package="com.therealtimosha.testTimoshaengine" main="Main"
+		version="3.4.2" company="therealtimosha" />
+	<app if="mobile" unless="PROFILE_BUILD" title="Timosha Engine" file="TimoshaEngine"
+		packageName="com.therealtimosha.timoshaengine" package="com.therealtimosha.timoshaengine" main="Main"
+		version="3.4.2" company="therealtimosha" />
 	<!--Switch
 	Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
@@ -60,7 +60,7 @@
 	<define name="BASE_GAME_FILES"/>
 
 	<!-- Adds support for touchscreen devices (like mobiles)-->
-	<define name="TOUCH_CONTROLS_ALLOWED" if="mobile || web || debug" />
+	<define name="TOUCH_CONTROLS_ALLOWED" if="mobile" />
 
 	<!-- Do you want to check for P-Slice updates?-->
 	<define name="CHECK_FOR_UPDATES" unless="web || hl" />
@@ -75,7 +75,7 @@
 	<define name="FIREBASE_CRASH_HANDLER" if="mobile"/>
 
 	<!-- Displays a "Touch here to play" screen-->
-	<define name="TOUCH_HERE_TO_PLAY" if="TOUCH_CONTROLS_ALLOWED debug" />
+        <define name="TOUCH_HERE_TO_PLAY" if="TOUCH_CONTROLS_ALLOWED mobile" />
 
 	<!-- Other stuff -->
 	<define name="ACHIEVEMENTS_ALLOWED" />

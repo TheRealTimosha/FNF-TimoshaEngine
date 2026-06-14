@@ -24,8 +24,8 @@ class Logger{
             #else
             #if macos
             if(StorageUtil.getStorageDirectory().contains("AppTranslocation"))
-                CoolUtil.showPopUp("MacOS decided to isolate P-Slice from the rest of your system!"+
-                "As such, you need to move P-Slice away from the \"Downloads\" folder into either your applications, or another folder.","File logging failed to init");
+                CoolUtil.showPopUp("MacOS decided to isolate Timosha Engine from the rest of your system!"+
+                "As such, you need to move Timosha Engine away from the \"Downloads\" folder into either your applications, or another folder.","File logging failed to init");
             else
             #end
             CoolUtil.showPopUp(x.message,"File logging failed to init");

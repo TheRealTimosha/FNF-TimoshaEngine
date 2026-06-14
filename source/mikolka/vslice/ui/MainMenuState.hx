@@ -15,6 +15,7 @@ class MainMenuState extends MusicBeatState
 	public static var psychEngineVersion:String = '0.6.3'; // This is also used for Discord RPC
 	#end
 	public static var pSliceVersion:String = '3.4.2';
+	public static var timoshaEngineVersion:String = '0.0.1';
 	public static var funkinVersion:String = '0.7.6'; // Version of funkin' we are emulationg
 
 	var bg:FlxSprite;
@@ -64,15 +65,24 @@ class MainMenuState extends MusicBeatState
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 
-		var psychVer:FlxText = new FlxText(0, FlxG.height - 18, FlxG.width, "Psych Engine " + psychEngineVersion, 12);
-		var fnfVer:FlxText = new FlxText(0, FlxG.height - 18, FlxG.width, 'v${funkinVersion} (P-slice ${pSliceVersion})', 12);
+		var timoshaVer:FlxText = new FlxText(12, FlxG.height - 84, 0, "Timosha Engine v" + timoshaEngineVersion, 12);
+        var psychVer:FlxText = new FlxText(12, FlxG.height - 64, 0, "Psych Engine v" + psychEngineVersion, 12);
+		var pSliceVer:FlxText = new FlxText(12, FlxG.height - 44, 0, "P-slice v" + pSliceVersion, 12);
+        var fnfVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + funkinVersion, 12);
 
-		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		fnfVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		timoshaVer.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		psychVer.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		pSliceVer.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		fnfVer.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 
+		timoshaVer.scrollFactor.set();
 		psychVer.scrollFactor.set();
+		pSliceVer.scrollFactor.set();
 		fnfVer.scrollFactor.set();
+        
+	    add(timoshaVer);
 		add(psychVer);
+		add(pSliceVer);
 		add(fnfVer);
 
 		#if ACHIEVEMENTS_ALLOWED
