@@ -72,10 +72,10 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			PERCENT);
 		addOption(option);
 		option.scrollSpeed = 1.6;
-		option.minValue = 0.0;
+		option.minValue = 0;
 		option.maxValue = 1;
-		option.changeValue = 0.1;
-		option.decimals = 1;
+		option.changeValue = 0.01;
+		option.decimals = 2;
 		option.onChange = onChangeHitsoundVolume;
 
 		var option:Option = new Option('Rating Offset',
@@ -94,9 +94,9 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			FLOAT);
 		option.displayFormat = '%vms';
 		option.scrollSpeed = 15;
-		option.minValue = 15.0;
-		option.maxValue = 45.0;
-		option.changeValue = 0.5;
+		option.minValue = 15;
+		option.maxValue = 45;
+		option.changeValue = 0.1;
 		addOption(option);
 
 		var option:Option = new Option('Good Hit Window',
@@ -105,9 +105,9 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			FLOAT);
 		option.displayFormat = '%vms';
 		option.scrollSpeed = 30;
-		option.minValue = 15.0;
-		option.maxValue = 90.0;
-		option.changeValue = 0.5;
+		option.minValue = 15;
+		option.maxValue = 90;
+		option.changeValue = 0.1;
 		addOption(option);
 
 		var option:Option = new Option('Bad Hit Window',
@@ -116,9 +116,9 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			FLOAT);
 		option.displayFormat = '%vms';
 		option.scrollSpeed = 60;
-		option.minValue = 15.0;
-		option.maxValue = 135.0;
-		option.changeValue = 0.5;
+		option.minValue = 15;
+		option.maxValue = 135;
+		option.changeValue = 0.1;
 		addOption(option);
 
 		var option:Option = new Option('Safe Frames',
@@ -130,8 +130,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.maxValue = 10;
 		option.changeValue = 0.1;
 		addOption(option);
-
-		
 
 		super();
 	}

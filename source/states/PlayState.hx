@@ -162,7 +162,7 @@ class PlayState extends MusicBeatState
 	private var curSong:String = "";
 
 	public var gfSpeed:Int = 1;
-	public var health(default, set):Float = 1;
+	public var health:Float = 1;
 
 	private var healthLerp:Float = 1;
 
@@ -1974,11 +1974,39 @@ override public function update(elapsed:Float)
 			openCharacterEditor();
 	}
 
-	if (healthBar.bounds.max != null && health > healthBar.bounds.max)
-		health = healthBar.bounds.max;
-
 	updateIconsScale(elapsed);
 	updateIconsPosition();
+
+	if (health > 2)
+		health = 2;
+
+	if (iconP1.animation.numFrames == 3) {
+		if (healthBar.percent < 20)
+			iconP1.animation.curAnim.curFrame = 1;
+		else if (healthBar.percent > 80)
+			iconP1.animation.curAnim.curFrame = 2;
+		else
+			iconP1.animation.curAnim.curFrame = 0;
+	} else {
+		if (healthBar.percent < 20)
+			iconP1.animation.curAnim.curFrame = 1;
+		else
+			iconP1.animation.curAnim.curFrame = 0;
+	}
+		
+	if (iconP2.animation.numFrames == 3) {
+		if (healthBar.percent > 80)
+			iconP2.animation.curAnim.curFrame = 1;
+		else if (healthBar.percent < 20)
+			iconP2.animation.curAnim.curFrame = 2;
+		else
+			iconP2.animation.curAnim.curFrame = 0;
+	} else {
+		if (healthBar.percent > 80)
+			iconP2.animation.curAnim.curFrame = 1;
+		else
+			iconP2.animation.curAnim.curFrame = 0;
+	}
 
 	if (startedCountdown && !paused)
 	{
@@ -2168,30 +2196,6 @@ public dynamic function updateIconsPosition()
 	var iconOffset:Int = 26;
 	iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 	iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
-}
-
-var iconsAnimations:Bool = true;
-
-function set_health(value:Float):Float // You can alter how icon animations work here
-{
-	value = FlxMath.roundDecimal(value, 5); // Fix Float imprecision
-	if (!iconsAnimations || healthBar == null || !healthBar.enabled || healthBar.valueFunction == null)
-	{
-		health = value;
-		return health;
-	}
-
-	// update health bar
-	health = value;
-	var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max),
-		healthBar.bounds.min, healthBar.bounds.max, 0, 100);
-	healthBar.percent = (newPercent != null ? newPercent : 0);
-
-	if(iconP1?.animation?.curAnim?.curFrame != null)
-		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : 0; // If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-	if(iconP2?.animation?.curAnim?.curFrame != null)
-		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : 0; // If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-	return health;
 }
 
 function openPauseMenu()
@@ -3778,11 +3782,9 @@ public function goodNoteHit(note:Note):Void
 		{
 			combo++;
 			maxCombo = FlxMath.maxInt(maxCombo, combo);
-			if (combo > 9999)
-				combo = 9999;
 			popUpScore(note);
 		}
-		else if (!guitarHeroSustains)
+		else if (!guitarHeroSustains && !cpuControlled)
 		{ // ? Legacy scoring for sustains
 			songScore += 125;
 			updateScoreText();

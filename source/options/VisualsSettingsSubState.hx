@@ -90,22 +90,33 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			'splashAlpha',
 			PERCENT);
 		option.scrollSpeed = 1.6;
-		option.minValue = 0.0;
+		option.minValue = 0;
 		option.maxValue = 1;
-		option.changeValue = 0.1;
-		option.decimals = 1;
+		option.changeValue = 0.01;
+		option.decimals = 2;
 		addOption(option);
 		option.onChange = playNoteSplashes;
 
+		var option:Option = new Option('Note Hold Opacity',
+			'How much transparent should the Note Hold be.',
+			'holdAlpha',
+			PERCENT);
+		option.scrollSpeed = 1.6;
+		option.minValue = 0;
+		option.maxValue = 1;
+		option.changeValue = 0.01;
+		option.decimals = 2;
+		addOption(option);
+
 		var option:Option = new Option('Note Hold Splash Opacity',
-			'How much transparent should the Note Hold Splash be.\n0% disables it.',
+			'How much transparent should the Note Hold Splash be.',
 			'holdSplashAlpha',
 			PERCENT);
 		option.scrollSpeed = 1.6;
-		option.minValue = 0.0;
+		option.minValue = 0;
 		option.maxValue = 1;
-		option.changeValue = 0.1;
-		option.decimals = 1;
+		option.changeValue = 0.01;
+		option.decimals = 2;
 		addOption(option);
 
 		var option:Option = new Option('Hide HUD',
@@ -144,10 +155,10 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			'healthBarAlpha',
 			PERCENT);
 		option.scrollSpeed = 1.6;
-		option.minValue = 0.0;
+		option.minValue = 0;
 		option.maxValue = 1;
-		option.changeValue = 0.1;
-		option.decimals = 1;
+		option.changeValue = 0.01;
+		option.decimals = 2;
 		addOption(option);
 		
 		var option:Option = new Option('FPS Counter',
@@ -155,10 +166,10 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			'showFPSOpacity',
 			PERCENT);
 		option.scrollSpeed = 1.6;
-		option.minValue = 0.0;
+		option.minValue = 0;
 		option.maxValue = 1;
-		option.changeValue = 0.1;
-		option.decimals = 1;
+		option.changeValue = 0.01;
+		option.decimals = 2;
 		addOption(option);
 
 		option.onChange = onChangeFPSCounter;
