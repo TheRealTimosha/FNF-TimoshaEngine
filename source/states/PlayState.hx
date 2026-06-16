@@ -3666,7 +3666,7 @@ function opponentNoteHit(note:Note):Void
 
 		if (char != null)
 		{
-			var canPlay:Bool = true;
+			var canPlay:Bool = (!note.isSustainNote || ClientPrefs.data.vsliceSus && note.isSustainNote);
 			if (note.isSustainNote)
 			{
 				var holdAnim:String = animToPlay + '-hold';
@@ -3742,7 +3742,7 @@ public function goodNoteHit(note:Note):Void
 
 			if (char != null)
 			{
-				var canPlay:Bool = true;
+				var canPlay:Bool = (!note.isSustainNote || ClientPrefs.data.vsliceSus && note.isSustainNote);
 				if (note.isSustainNote)
 				{
 					var holdAnim:String = animToPlay + '-hold';

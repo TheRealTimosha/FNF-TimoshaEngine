@@ -266,6 +266,36 @@ description_safe_frames: "Ajusta quanto tempo a mais ou a menos você terá\npar
 setting_sustains_as_one_note: "Notas Longas Fundidas"
 description_sustains_as_one_note: "Se marcado, notas longas não poderão ser acertadas se a principal não for acertada,\nalém de contar como um único erro."
 
+
+// P-Slice settings
+setting_freeplay_dynamic_coloring: "Colorir de Forma Dinâmica e Livre"
+description_freeplay_dynamic_coloring: "Se desativado, alguns conteúdos impróprios (como palavrões, etc.) serão desativados."
+setting_logging_type: "Tipo de Registro:"
+description_logging_type: "Controla o nível de detalhamento dos registros do jogo."
+setting_logging_type-none: "Nenhum"
+setting_logging_type-file: "Arquivo"
+setting_force_new_tag: "Etiqueta "Nova" Forçada"
+description_force_new_tag: "Se ativada, essa opção forçará a exibição da etiqueta "novo" em todas as músicas incompletas, mesmo que esteja desativada."
+setting_multithreaded_caching: "Cache Multithread"
+description_multithreaded_caching: "Se marcado, essa opção habilita o carregamento multithread, o que melhora os tempos de carregamento, mas com uma pequena chance de o jogo travar durante o carregamento de uma música."
+setting_strict_loading_screen: "Tela de Carregamento Rígida"
+description_strict_loading_screen: "Se marcado, a opção fará com que o jogo descarregue primeiro os elementos da interface do usuário e, em seguida, pré-carregue os dados da música. (útil para dispositivos com pouca memória)"
+
+// V-Slice settings
+setting_naughtyness: "Travessuras"
+description_naughtyness: "Se desativado, alguns conteúdos impróprios (como palavrões, etc.) serão desativados."
+setting_use_results_screen: "Usar a tela de Resultados"
+description_use_results_screen: "Se desativado, a tela de resultados será ignorada."
+setting_smooth_health_bar: "Barra de Saúde Suave"
+description_smooth_health_bar: "Se ativado, faz com que a barra de saúde se mova de forma mais suave."
+setting_old_sustain_note_style: "Estilo de Nota Sustentada Antiga"
+description_old_sustain_note_style: "Se marcado, a opção de sustentar notas reagirá da mesma forma que antes da versão 0.3.X."
+setting_use_legacy_bar: "Usar a Barra Legada"
+description_use_legacy_bar: "Simplifica bastante a barra de saúde e o texto da pontuação."
+setting_special_freeplay_cards: "Cartões Especiais de Jogo Gratuito"
+description_special_freeplay_cards: "Se desativado, forçará todos os personagens a usarem a carta do BF. (incluindo o Pico)"
+
+
 // Loading Screen
 now_loading: "Carregando{1}"
 
