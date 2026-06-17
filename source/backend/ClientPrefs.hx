@@ -77,6 +77,7 @@ import states.InitState;
 	public var timeBarType:String = 'Time Left';
 	public var scoreZoom:Bool = true;
 	public var noReset:Bool = false;
+	public var badShitBreakCombo:Bool = false; // When true, Bad and Shit will break the combo
 	public var healthBarAlpha:Float = 1;
 	public var hitsoundVolume:Float = 0;
 	public var pauseMusic:String = 'Tea Time';

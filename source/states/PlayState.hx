@@ -107,6 +107,13 @@ class PlayState extends MusicBeatState
 
 	public var playbackRate(default, set):Float = 1;
 
+	public var npsSpeedMult:Float = 1;
+	public var nps:Float = 0;
+	public var maxNPS:Float = 0;
+	var notesHitArray:Array<Float> = [];
+	var notesHitDateArray:Array<Float> = [];
+	var notesToRemoveCount:Int = 0;
+
 	public var boyfriendGroup:FlxSpriteGroup;
 	public var dadGroup:FlxSpriteGroup;
 	public var gfGroup:FlxSpriteGroup;
@@ -130,7 +137,7 @@ class PlayState extends MusicBeatState
 	public static var altInstrumentals:String = null;
 	public static var storyDifficultyColor = FlxColor.GRAY;
 
-	public var spawnTime:Float = 2000;
+	public var spawnTime:Float = 1600;
 
 	public var inst:FlxSound;
 	public var vocals:FlxSound;
@@ -211,6 +218,9 @@ class PlayState extends MusicBeatState
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
+
+	private var lerpingScore:Bool = true;
+	public var shownScore:Float = 0;
 
 	var timeTxt:FlxText;
 	var scoreTxtTween:FlxTween;
@@ -578,9 +588,9 @@ class PlayState extends MusicBeatState
 		uiGroup.add(iconP2);
 
 		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
-		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
-		scoreTxt.borderSize = 1.25;
+		scoreTxt.borderSize = 1;
 		scoreTxt.visible = !ClientPrefs.data.hideHud;
 		updateScore(false);
 		uiGroup.add(scoreTxt);
@@ -1270,35 +1280,35 @@ class PlayState extends MusicBeatState
 	// `updateScore = function(miss:Bool = false) { ... }
 	// its like if it was a variable but its just a function!
 	// cool right? -Crow
-	public dynamic function updateScore(miss:Bool = false, scoreBop:Bool = true)
+	public dynamic function updateScore(miss:Bool = false)
 	{
-		if (ClientPrefs.data.vsliceLegacyBar)
-			scoreBop = false;
 		var ret:Dynamic = callOnScripts('preUpdateScore', [miss], true);
 		if (ret == LuaUtils.Function_Stop)
 			return;
 
 		updateScoreText();
-		if (!miss && !cpuControlled && scoreBop)
-			doScoreBop();
 
 		callOnScripts('onUpdateScore', [miss]);
 	}
 
 	public dynamic function updateScoreText()
 	{
-		var str:String = Language.getPhrase('rating_$ratingName', ratingName);
-		if (totalPlayed != 0)
+		var percent:Float = CoolUtil.floorDecimal(ratingPercent * 100, 2);
+		var str:String = Language.getPhrase('accuracy', '{1}%', [percent]);
+
+		var finalRating:String = Language.getPhrase('rating_$ratingName', ratingName);
+		if(totalPlayed != 0)
 		{
-			var percent:Float = CoolUtil.floorDecimal(ratingPercent * 100, 2);
-			str += ' (${percent}%) - ' + Language.getPhrase(ratingFC);
+			finalRating += " - (" + Language.getPhrase(ratingFC) + ")";
 		}
 
 		var tempScore:String;
 		if (!instakillOnMiss)
-			tempScore = Language.getPhrase('score_text', 'Score: {1} | Misses: {2} | Rating: {3}', [songScore, songMisses, str]);
+			tempScore = Language.getPhrase('score_text', 'Score: {1} | Misses: {2} | Combo: {3} | NPS/Max: {4} | Accuracy: {5} | Rating: {6}', [FlxStringUtil.formatMoney(shownScore, false), FlxStringUtil.formatMoney(songMisses, false), FlxStringUtil.formatMoney(combo, false), FlxStringUtil.formatMoney(nps, false) + '/' + FlxStringUtil.formatMoney(maxNPS, false), str, finalRating]);
 		else
-			tempScore = Language.getPhrase('score_text_instakill', 'Score: {1} | Rating: {2}', [songScore, str]);
+			tempScore = Language.getPhrase('score_text_instakill', 'Score: {1} | Combo: {2} | NPS/Max: {3} | Accuracy: {4} | Rating: {5}', [FlxStringUtil.formatMoney(shownScore, false), FlxStringUtil.formatMoney(combo, false), FlxStringUtil.formatMoney(nps, false) + '/' + FlxStringUtil.formatMoney(maxNPS, false), str, finalRating]);
+		if (cpuControlled)
+			tempScore = Language.getPhrase('score_text_botplay', 'Score: {1} | Combo: {2} | NPS/Max: {3} | Botplay Mode', [FlxStringUtil.formatMoney(shownScore, false), FlxStringUtil.formatMoney(combo, false), FlxStringUtil.formatMoney(nps, false) + '/' + FlxStringUtil.formatMoney(maxNPS, false)]);
 		scoreTxt.text = tempScore;
 	}
 
@@ -2006,6 +2016,43 @@ override public function update(elapsed:Float)
 			iconP2.animation.curAnim.curFrame = 1;
 		else
 			iconP2.animation.curAnim.curFrame = 0;
+	}
+
+	if (notesHitDateArray.length > 0) {
+		notesToRemoveCount = 0;
+		var i = 0;
+
+		while (i < notesHitDateArray.length) {
+			if (!Math.isNaN(notesHitDateArray[i]) && (notesHitDateArray[i] + 1000 * npsSpeedMult < Conductor.songPosition)) {
+				notesToRemoveCount++;
+			}
+			i++;
+		}
+
+		if (notesToRemoveCount > 0) {
+			notesHitDateArray.splice(0, notesToRemoveCount);
+			notesHitArray.splice(0, notesToRemoveCount);
+		}
+
+		nps = 0;
+		for (value in notesHitArray)
+			nps += value;
+
+		if (nps > maxNPS) {
+			maxNPS = nps;
+		}
+			
+		updateScore();
+	}
+
+	if (lerpingScore) updateScore();
+		if (shownScore != songScore && Math.abs(shownScore - songScore) >= 10) {
+			shownScore = FlxMath.lerp(shownScore, songScore, 0.2 / (ClientPrefs.data.framerate / 60));
+				lerpingScore = true; // Indicate that lerping is in progress
+		} else {
+			shownScore = songScore;
+			lerpingScore = false;
+			updateScore(); //Update scoreTxt one last time
 	}
 
 	if (startedCountdown && !paused)
@@ -3121,10 +3168,16 @@ private function cachePopUpScore()
 	}
 }
 
-private function popUpScore(note:Note = null):Void
+private function popUpScore(note:Note = null, ?miss:Bool = false, scoreBop:Bool = true):Void
 {
 	var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset);
 	vocals.volume = 1;
+
+	if (ClientPrefs.data.vsliceLegacyBar)
+		scoreBop = false;
+
+	if (!miss && scoreBop)
+		doScoreBop();
 
 	if (!ClientPrefs.data.comboStacking && comboGroup.members.length > 0)
 	{
@@ -3145,7 +3198,10 @@ private function popUpScore(note:Note = null):Void
 	// tryna do MS based judgment due to popular demand
 	var daRating:Rating = Conductor.judgeNote(ratingsData, noteDiff / playbackRate);
 
-	if(daRating.name == "bad" || daRating.name == "shit") combo = 0; //V-Slice combo thingy
+	if (ClientPrefs.data.badShitBreakCombo)
+	{
+	    if(daRating.name == "bad" || daRating.name == "shit") combo = 0; //V-Slice combo thingy
+	}
 
 	totalNotesHit += daRating.ratingMod;
 	note.ratingMod = daRating.ratingMod;
@@ -3157,16 +3213,19 @@ private function popUpScore(note:Note = null):Void
 	if (daRating.noteSplash && !note.noteSplashData.disabled)
 		spawnNoteSplashOnNote(note);
 
-	if (!practiceMode && !cpuControlled)
+	if(!practiceMode && !miss) {
 	{
 		songScore += score;
-		if (!note.ratingDisabled)
+		if(!cpuControlled && !note.ratingDisabled)
 		{
 			songHits++;
 			totalPlayed++;
+			if(!cpuControlled || cpuControlled) {
 			RecalculateRating(false);
-		}
-	}
+		    }
+	    }
+    }
+}
 
 	var uiPrefix:String = "";
 	var uiPostfix:String = '';
@@ -3782,9 +3841,11 @@ public function goodNoteHit(note:Note):Void
 		{
 			combo++;
 			maxCombo = FlxMath.maxInt(maxCombo, combo);
+			notesHitArray.push(1);
+			notesHitDateArray.push(Conductor.songPosition);
 			popUpScore(note);
 		}
-		else if (!guitarHeroSustains && !cpuControlled)
+		else if (!guitarHeroSustains)
 		{ // ? Legacy scoring for sustains
 			songScore += 125;
 			updateScoreText();
@@ -4297,7 +4358,7 @@ public function RecalculateRating(badHit:Bool = false, scoreBop:Bool = true)
 	setOnScripts('ratingFC', ratingFC);
 	setOnScripts('totalPlayed', totalPlayed);
 	setOnScripts('totalNotesHit', totalNotesHit);
-	updateScore(badHit, scoreBop); // score will only update after rating is calculated, if it's a badHit, it shouldn't bounce
+	updateScore(badHit); // score will only update after rating is calculated, if it's a badHit, it shouldn't bounce
 }
 
 #if ACHIEVEMENTS_ALLOWED

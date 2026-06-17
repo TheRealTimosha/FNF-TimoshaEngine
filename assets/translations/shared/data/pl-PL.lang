@@ -4,8 +4,9 @@ Polski (Poland)
 
 
 // Gameplay
-score_text: "Wynik: {1} | Skuchy: {2} | Ocena: {3}"
-score_text_instakill: "Wynik: {1} | Ocena: {2}"
+score_text: "Wynik: {1} | Skuchy: {2} | Kombinacja: {3} | NPS/Maks: {4} | Celność: {5} | Ocena: {6}"
+score_text_instakill: "Wynik: {1} | Kombinacja: {2} | NPS/Maks: {3} | Celność: {4} | Ocena: {5}"
+score_text_botplay: "Wynik: {1} | Kombinacja: {2} | NPS/Maks: {3} | Tryb Botplay"
 botplay: "Botplay"
 
 rating_you_suck: "Ssiesz!"
