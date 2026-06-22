@@ -38,6 +38,7 @@ import states.InitState;
 	public var noteSkin:String = 'Default';
 	public var splashSkin:String = 'Psych';
 	public var holdSkin:String = 'Vanilla';
+	public var tauntOnGo:Bool = true;
 	public var splashAlpha:Float = 1;
 	public var holdAlpha:Float = 1;
 	public var holdSplashAlpha:Float = 1;

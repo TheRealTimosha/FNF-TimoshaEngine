@@ -1161,20 +1161,41 @@ class PlayState extends MusicBeatState
 				switch (swagCounter)
 				{
 					case 0:
-						FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
+						FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 1);
 						tick = THREE;
 					case 1:
 						countdownReady = createCountdownSprite(introAlts[0], antialias);
-						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
+						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 1);
 						tick = TWO;
 					case 2:
 						countdownSet = createCountdownSprite(introAlts[1], antialias);
-						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
+						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 1);
 						tick = ONE;
 					case 3:
 						countdownGo = createCountdownSprite(introAlts[2], antialias);
-						FlxG.sound.play(Paths.sound('introGo' + introSoundsSuffix), 0.6);
+						FlxG.sound.play(Paths.sound('introGo' + introSoundsSuffix), 1);
 						tick = GO;
+						if (ClientPrefs.data.tauntOnGo)
+						{
+							final charsToHey = [dad, boyfriend, gf];
+							for (char in charsToHey)
+							{
+								if(char != null)
+								{
+									if (char.animOffsets.exists('hey') || char.animOffsets.exists('cheer'))
+									{
+										char.playAnim(char.animOffsets.exists('hey') ? 'hey' : 'cheer', true);
+										char.specialAnim = true;
+										char.heyTimer = 0.6;
+									} else if (char.animOffsets.exists('singUP') && (!char.animOffsets.exists('hey') || !char.animOffsets.exists('cheer')))
+									{
+										char.playAnim('singUP', true);
+										char.specialAnim = true;
+										char.heyTimer = 0.6;
+									}
+								}
+							}
+						}
 					case 4:
 						tick = START;
 				}
