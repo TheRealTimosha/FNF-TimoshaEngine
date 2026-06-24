@@ -133,6 +133,7 @@ delay_beat_hit: "Batida!"
 delay_current_offset: "Atraso: {1} ms";
 combo_rating_offset: "Offset de Classificação:"
 combo_numbers_offset: "Offset de Números:"
+combo_combo_offset: "Offset de Combinado:"
 combo_offset: "Offset do Combo";
 note_delay: "Atraso das Notas";
 switch_on_button: "(Pressione {1} para Trocar)"
@@ -252,8 +253,6 @@ setting_bad_and_shit_break_combo: "Combinação de quebra ruim e merda"
 description_bad_and_shit_break_combo: "Se marcado, acertar notas ruins ou de merda interromperá seu combo e contará como uma quebra de combo em vez de apenas erros."
 setting_auto_pause: "Pausa Automática"
 description_auto_pause: "Se marcado, a janela é automaticamente pausada se não estiver em foco."
-setting_pop_up_score: "Pop Up Dos Pontos"
-description_pop_up_score: "Se desmarcado, Acertar notas não ira emitir "sick", "good" e popups de combos.\n(Útil para celulares fracos)"
 setting_disable_reset_button: "Desativar Botão de Reset"
 description_disable_reset_button: "Se marcado, apertar Reset não irá matar o jogador."
 setting_hitsound_volume: "Volume do Som de Acerto"
@@ -271,6 +270,13 @@ description_safe_frames: "Ajusta quanto tempo a mais ou a menos você terá\npar
 setting_sustains_as_one_note: "Notas Longas Fundidas"
 description_sustains_as_one_note: "Se marcado, notas longas não poderão ser acertadas se a principal não for acertada,\nalém de contar como um único erro."
 
+
+setting_show_ratings: "Mostrar Classificações"
+description_show_ratings: "Se desativado, a opção não exibirá um indicador de pontuação ao acertar uma nota."
+setting_show_combo_numbers: "Mostrar Números Combinados"
+description_show_combo_numbers: "Se desativado, não exibirá os números de combos ao tocar uma nota."
+setting_show_combo: "Mostrar Combinado"
+description_show_combo: "Se desativado, a opção não exibirá o sprite de combo ao acertar uma nota."
 
 // P-Slice settings
 setting_freeplay_dynamic_coloring: "Colorir de Forma Dinâmica e Livre"

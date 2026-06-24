@@ -211,6 +211,24 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 		#end
 
+		var option:Option = new Option('Show Ratings',
+			"If unchecked, the game will not show a rating sprite when hitting a note.",
+			'ratingPopups',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Show Combo Numbers',
+			"If unchecked, the game will not show combo numbers when hitting a note.",
+			'comboNumsPopups',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Show Combo',
+			"If unchecked, the game will not show combo sprite when hitting a note.",
+			'comboPopups',
+			BOOL);
+		addOption(option);
+
 		var option:Option = new Option('Combo Stacking',
 			"If unchecked, Ratings and Combo won't stack, saving on System Memory and making them easier to read",
 			'comboStacking',

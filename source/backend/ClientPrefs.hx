@@ -19,7 +19,6 @@ import states.InitState;
 	public var storageType:String = "EXTERNAL";
 	#end
 	public var hitboxType:String = "Gradient";
-	public var popUpRating:Bool = true;
 	public var vsync:Bool = false;
 	public var vibrating:Bool = false;
 
@@ -44,6 +43,9 @@ import states.InitState;
 	public var holdSplashAlpha:Float = 1;
 	public var lowQuality:Bool = false;
 	public var shaders:Bool = true;
+	public var ratingPopups:Bool = true;
+	public var comboPopups:Bool = false;
+	public var comboNumsPopups:Bool = true;
 	public var cacheOnGPU:Bool = #if !switch false #else true #end; //From Stilic (I think he hates us actually)
 	public var cacheOnCPU:Bool = #if android false #else true #end;
 	public var strictLoadingScreen:Bool = true;
