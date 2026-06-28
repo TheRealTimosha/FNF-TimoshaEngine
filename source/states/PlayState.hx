@@ -66,7 +66,7 @@ import crowplexus.hscript.Printer;
 **/
 class PlayState extends MusicBeatState
 {
-	public static var STRUM_X = 42;
+	public static var STRUM_X = 44;
 	public static var STRUM_X_MIDDLESCROLL = -278;
 
 	public static var ratingStuff:Array<Dynamic> = [
@@ -189,6 +189,11 @@ class PlayState extends MusicBeatState
 	public var startingSong:Bool = false;
 
 	private var updateTime:Bool = true;
+	var curTime:Float = 0;
+	var songCalc:Float = 0;
+	var lastUpdateTime:Float = 0;
+
+	var EngineWatermark:FlxText;
 
 	public static var changedDifficulty:Bool = false;
 	public static var chartingMode:Bool = false;
@@ -219,7 +224,7 @@ class PlayState extends MusicBeatState
 	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
 
-	private var lerpingScore:Bool = true;
+	private var lerpingScore:Bool = false;
 	public var shownScore:Float = 0;
 
 	var timeTxt:FlxText;
@@ -535,6 +540,12 @@ class PlayState extends MusicBeatState
 			timeTxt.y += 3;
 		}
 
+		if (ClientPrefs.data.timeBarType == 'Song Name + Time')
+		{
+			timeTxt.size = 24;
+			timeTxt.y += 3;
+		}
+
 		generateSong();
 
 		noteGroup.add(grpNoteSplashes);
@@ -594,6 +605,36 @@ class PlayState extends MusicBeatState
 		scoreTxt.visible = !ClientPrefs.data.hideHud;
 		updateScore(false);
 		uiGroup.add(scoreTxt);
+
+		EngineWatermark = new FlxText(4, FlxG.height * 0.9 + 50, 0, "", 16);
+		EngineWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
+		EngineWatermark.scrollFactor.set();
+		EngineWatermark.text = SONG.song;
+		uiGroup.add(EngineWatermark);
+
+		switch(ClientPrefs.data.watermarkStyle)
+		{
+			case 'Vanilla': EngineWatermark.text = SONG.song + " - " + Difficulty.getString().toUpperCase() + " | TE " + MainMenuState.timoshaEngineVersion;
+			case 'Forever Engine':
+				EngineWatermark.text = "Timosha Engine v" + MainMenuState.timoshaEngineVersion;
+				EngineWatermark.x = FlxG.width - EngineWatermark.width - 5;
+			case 'JS Engine':
+				if (!ClientPrefs.data.downScroll) EngineWatermark.y = FlxG.height * 0.1 - 70;
+				EngineWatermark.text = "Playing " + SONG.song + " on " + Difficulty.getString().toUpperCase() + " - TE v" + MainMenuState.timoshaEngineVersion;
+			case 'JS Engine (Old)': 
+				if (!ClientPrefs.data.downScroll) EngineWatermark.y = FlxG.height * 0.9 - 643;
+				EngineWatermark.text = "You are now playing " + SONG.song + " on " + Difficulty.getString().toUpperCase() + "! (TE v" + MainMenuState.timoshaEngineVersion + ")";
+			case 'Os Engine': 
+				EngineWatermark.text = SONG.song + " - (" + Difficulty.getString().toUpperCase() + ") " + "| TE " + MainMenuState.timoshaEngineVersion;
+			case 'Dave Engine':
+				EngineWatermark.setFormat(Paths.font("comic.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
+				EngineWatermark.text = SONG.song;
+				EngineWatermark.y = healthBar.y + 50;
+
+			default:
+		}
+
+		if (ClientPrefs.data.watermarkStyle == 'Hide' && EngineWatermark != null) EngineWatermark.visible = false;
 
 		botplayTxt = new FlxText(400, healthBar.y - 90, FlxG.width - 800, Language.getPhrase("Botplay").toUpperCase(), 32);
 		botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -2097,19 +2138,20 @@ override public function update(elapsed:Float)
 	}
 	else if (!paused && updateTime)
 	{
-		var curTime:Float = Math.max(0, Conductor.songPosition - ClientPrefs.data.noteOffset);
-		songPercent = (curTime / songLength);
+		songPercent = (Conductor.songPosition - ClientPrefs.data.noteOffset) / songLength;
 
-		var songCalc:Float = (songLength - curTime);
-		if (ClientPrefs.data.timeBarType == 'Time Elapsed')
-			songCalc = curTime;
+		if (Conductor.songPosition - lastUpdateTime >= 1)
+		{
+			lastUpdateTime = Conductor.songPosition;
+			if (ClientPrefs.data.timeBarType != 'Song Name')
+			{
+				timeTxt.text = ClientPrefs.data.timeBarType.contains('Time Left') ? CoolUtil.getSongDuration(Conductor.songPosition, songLength) : CoolUtil.formatTime(Conductor.songPosition)
+				+ (ClientPrefs.data.timeBarType.contains('Modern Time') ? ' / ' + CoolUtil.formatTime(songLength) : '');
 
-		var secondsTotal:Int = Math.floor(songCalc / 1000);
-		if (secondsTotal < 0)
-			secondsTotal = 0;
-
-		if (ClientPrefs.data.timeBarType != 'Song Name')
-			timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+				if (ClientPrefs.data.timeBarType == 'Song Name + Time')
+					timeTxt.text = SONG.song + ' (' + CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength) + ')';
+			}
+		}
 	}
 
 	if (camZooming)
@@ -3661,6 +3703,11 @@ function noteMissCommon(direction:Int, note:Note = null)
 
 function opponentNoteHit(note:Note):Void
 {
+	var time:Float = 0.15;
+	if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
+		time += 0.15;
+	}
+
 	var result:Dynamic = callOnLuas('opponentNoteHitPre', [
 		notes.members.indexOf(note),
 		Math.abs(note.noteData),
@@ -3709,7 +3756,12 @@ function opponentNoteHit(note:Note):Void
 
 	if (opponentVocals.length <= 0)
 		vocals.volume = 1;
-	strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
+	if (ClientPrefs.data.strumLitStyle == 'Full Anim') {
+		strumPlayAnim(true, Std.int(Math.abs(note.noteData)), time / playbackRate);
+	}
+	if (ClientPrefs.data.strumLitStyle == 'BPM Based') {
+	    strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
+	}
 	note.hitByOpponent = true;
 
 	stagesFunc(function(stage:BaseStage) stage.opponentNoteHit(note));
@@ -3730,6 +3782,11 @@ function opponentNoteHit(note:Note):Void
 
 public function goodNoteHit(note:Note):Void
 {
+	var time:Float = 0.15;
+	if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
+		time += 0.15;
+	}
+
 	if (note.wasGoodHit)
 		return;
 	if (cpuControlled && note.ignoreNote)
@@ -3793,14 +3850,13 @@ public function goodNoteHit(note:Note):Void
 			}
 		}
 
-		if (!cpuControlled)
+		if(!cpuControlled)
 		{
 			var spr = playerStrums.members[note.noteData];
-			if (spr != null)
-				spr.playAnim('confirm', true);
+			if(spr != null) spr.playAnim('confirm', true);
 		}
-		else
-			strumPlayAnim(false, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
+		else if (ClientPrefs.data.strumLitStyle == 'Full Anim') strumPlayAnim(false, Std.int(Math.abs(note.noteData)), time / playbackRate);
+		else if (ClientPrefs.data.strumLitStyle == 'BPM Based') strumPlayAnim(false, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
 		vocals.volume = 1;
 
 		if (!note.isSustainNote)

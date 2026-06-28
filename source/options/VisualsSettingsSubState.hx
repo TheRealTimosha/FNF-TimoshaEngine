@@ -135,7 +135,21 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			"What should the Time Bar display?",
 			'timeBarType',
 			STRING,
-			['Time Left', 'Time Elapsed', 'Song Name', 'Disabled']);
+			['Time Left', 'Time Elapsed', 'Song Name', 'Modern Time', 'Song Name + Time', 'Disabled']);
+		addOption(option);
+
+		var option:Option = new Option('Watermark Style:',
+			"How would you like your Watermark to look?",
+			'watermarkStyle',
+			STRING,
+			['Vanilla', 'Dave Engine', 'JS Engine', 'JS Engine (Old)', 'Os Engine', 'Forever Engine', 'Hide']);
+		addOption(option);
+
+		var option:Option = new Option('Strum Light Up Style:',
+			"How would you like the strum animations to play when lit up?",
+			'strumLitStyle',
+			STRING,
+			['BPM Based', 'Full Anim']);
 		addOption(option);
 
 		var option:Option = new Option('Flashing Lights',
