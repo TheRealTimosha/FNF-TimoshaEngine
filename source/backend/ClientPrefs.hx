@@ -38,6 +38,7 @@ import states.InitState;
 	public var splashSkin:String = 'Psych';
 	public var holdSkin:String = 'Vanilla';
 	public var watermarkStyle:String = 'Vanilla';
+	public var hitsoundType:String = 'osu!mania';
 	public var tauntOnGo:Bool = true;
 	public var splashAlpha:Float = 1;
 	public var holdAlpha:Float = 1;

@@ -155,6 +155,12 @@ class PlayState extends MusicBeatState
 
 	private static var prevCamFollow:FlxObject;
 
+	public var hitSoundString:String = ClientPrefs.data.hitsoundType;
+	var hitsound:FlxSound;
+	var hitsoundImageToLoad:String;
+	var hitsoundImage:FlxSprite;
+	public var hitImagesFrame:Int = 0;
+
 	public var strumLineNotes:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
 	public var opponentStrums:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
 	public var playerStrums:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
@@ -336,6 +342,11 @@ class PlayState extends MusicBeatState
 		practiceMode = ClientPrefs.getGameplaySetting('practice');
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay');
 		guitarHeroSustains = ClientPrefs.data.guitarHeroSustains;
+
+	    if (FileSystem.exists(Paths.getSharedPath('sounds/hitsounds/' + ClientPrefs.data.hitsoundType.toLowerCase() + '.txt'))) 
+		    hitsoundImageToLoad = File.getContent(Paths.getSharedPath('sounds/hitsounds/' + ClientPrefs.data.hitsoundType.toLowerCase() + '.txt'));
+	    else if (FileSystem.exists(Paths.modFolders('sounds/hitsounds/' + ClientPrefs.data.hitsoundType.toLowerCase() + '.txt')))
+		    hitsoundImageToLoad = File.getContent(Paths.modFolders('sounds/hitsounds/' + ClientPrefs.data.hitsoundType.toLowerCase() + '.txt'));
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = initPsychCamera();
@@ -709,8 +720,10 @@ class PlayState extends MusicBeatState
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 
 		// PRECACHING THINGS THAT GET USED FREQUENTLY TO AVOID LAGSPIKES
-		if (ClientPrefs.data.hitsoundVolume > 0)
-			Paths.sound('hitsound');
+		if (hitSoundString != "none")
+		hitsound = FlxG.sound.load(Paths.sound("hitsounds/" + Std.string(hitSoundString).toLowerCase()));
+		if(ClientPrefs.data.hitsoundVolume > 0) Paths.sound('hitsound');
+		hitsound.volume = ClientPrefs.data.hitsoundVolume;
 		if (!ClientPrefs.data.ghostTapping)
 			for (i in 1...4)
 				Paths.sound('missnote$i');
@@ -3805,8 +3818,29 @@ public function goodNoteHit(note:Note):Void
 
 	note.wasGoodHit = true;
 
-	if (note.hitsoundVolume > 0 && !note.hitsoundDisabled)
-		FlxG.sound.play(Paths.sound(note.hitsound), note.hitsoundVolume);
+	if (note.hitsoundVolume > 0 && !note.hitsoundDisabled && !note.isSustainNote)
+	{
+		hitsound.play(true);
+		if (FileSystem.exists('assets/shared/images/' + hitsoundImageToLoad + '.png') || FileSystem.exists(Paths.modFolders('images/' + hitsoundImageToLoad + '.png')) && hitImagesFrame < 4)
+		{
+			hitImagesFrame++;
+			hitsoundImage = new FlxSprite().loadGraphic(Paths.image(hitsoundImageToLoad));
+			hitsoundImage.antialiasing = ClientPrefs.data.antialiasing;
+			hitsoundImage.scrollFactor.set();
+			hitsoundImage.setGraphicSize(Std.int(hitsoundImage.width / FlxG.camera.zoom));
+			hitsoundImage.updateHitbox();
+			hitsoundImage.screenCenter();
+			hitsoundImage.alpha = 1;
+			hitsoundImage.cameras = [camGame];
+			add(hitsoundImage);
+			FlxTween.tween(hitsoundImage, {alpha: 0}, 1 / (SONG.bpm / 100) / playbackRate, {
+				onComplete: function(tween:FlxTween)
+				{
+					hitsoundImage.destroy();
+				}
+			});
+		}
+	}
 
 	if (!note.hitCausesMiss) // Common notes
 	{

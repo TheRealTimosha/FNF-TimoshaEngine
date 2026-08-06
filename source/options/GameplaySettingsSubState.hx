@@ -78,6 +78,20 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.decimals = 2;
 		option.onChange = onChangeHitsoundVolume;
 
+		var hitsoundList:Array<String> = Mods.mergeAllTextsNamed('sounds/hitsounds/list.txt');
+		if (hitsoundList.length > 0)
+		{
+			if (!hitsoundList.contains(ClientPrefs.data.hitsoundType))
+				ClientPrefs.data.hitsoundType = hitsoundList[0];
+
+			var option:Option = new Option('Hitsound:',
+				"What type of hitsound would you like?",
+				'hitsoundType',
+				STRING,
+				hitsoundList);
+			addOption(option);
+		}
+
 		var option:Option = new Option('Rating Offset',
 			'Changes how late/early you have to hit for a "Sick!"\nHigher values mean you have to hit later.',
 			'ratingOffset',
@@ -135,7 +149,10 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 	}
 
 	function onChangeHitsoundVolume()
-		FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.data.hitsoundVolume);
+		if (ClientPrefs.data.hitsoundType != 'none') {
+			final hitSoundString:String = ClientPrefs.data.hitsoundType;
+			FlxG.sound.play(Paths.sound("hitsounds/" + Std.string(hitSoundString).toLowerCase()), ClientPrefs.data.hitsoundVolume);
+		}
 
 	function onChangeAutoPause()
 		FlxG.autoPause = ClientPrefs.data.autoPause;
