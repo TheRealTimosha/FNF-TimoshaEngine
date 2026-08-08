@@ -200,6 +200,18 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			BOOL);
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
+
+		var option:Option = new Option('Random Botplay Text',
+			"Uncheck this if you don't want to be insulted when\nyou use Botplay.",
+			'randomBotplayText',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Botplay Text Fading',
+			"If checked, the botplay text will do cool fading.",
+			'botTxtFade',
+			BOOL);
+		addOption(option);
 		
 		var option:Option = new Option('Pause Music:',
 			"What song do you prefer for the Pause Screen?",

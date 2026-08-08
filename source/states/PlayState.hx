@@ -19,6 +19,7 @@ import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
 import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
+import lime.system.System;
 import openfl.events.KeyboardEvent;
 import mikolka.funkin.Scoring;
 import mikolka.vslice.results.Tallies;
@@ -216,6 +217,11 @@ class PlayState extends MusicBeatState
 
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
+	
+	var randomBotplayText:String;
+	var theListBotplay:Array<String> = [];
+	var ogBotTxt:String = '';
+	var botplayUsed:Bool = false;
 
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
@@ -347,6 +353,9 @@ class PlayState extends MusicBeatState
 		    hitsoundImageToLoad = File.getContent(Paths.getSharedPath('sounds/hitsounds/' + ClientPrefs.data.hitsoundType.toLowerCase() + '.txt'));
 	    else if (FileSystem.exists(Paths.modFolders('sounds/hitsounds/' + ClientPrefs.data.hitsoundType.toLowerCase() + '.txt')))
 		    hitsoundImageToLoad = File.getContent(Paths.modFolders('sounds/hitsounds/' + ClientPrefs.data.hitsoundType.toLowerCase() + '.txt'));
+
+		theListBotplay = CoolUtil.coolTextFile(Paths.txt('botplayText'));
+		randomBotplayText = theListBotplay[FlxG.random.int(0, theListBotplay.length - 1)];
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = initPsychCamera();
@@ -598,13 +607,13 @@ class PlayState extends MusicBeatState
 		uiGroup.add(healthBar);
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
-		iconP1.y = healthBar.y - 75;
+		iconP1.y = healthBar.y - 71;
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		iconP1.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
-		iconP2.y = healthBar.y - 75;
+		iconP2.y = healthBar.y - 71;
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP2);
@@ -647,18 +656,19 @@ class PlayState extends MusicBeatState
 
 		if (ClientPrefs.data.watermarkStyle == 'Hide' && EngineWatermark != null) EngineWatermark.visible = false;
 
-		botplayTxt = new FlxText(400, healthBar.y - 90, FlxG.width - 800, Language.getPhrase("Botplay").toUpperCase(), 32);
+		botplayTxt = new FlxText(400, timeBar.y + 50, FlxG.width - 800, Language.getPhrase("Botplay").toUpperCase(), 32);
 		botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		botplayTxt.scrollFactor.set();
 		botplayTxt.borderSize = 1.25;
 		botplayTxt.visible = cpuControlled;
-		uiGroup.add(botplayTxt);
+		add(botplayTxt);
 		if (ClientPrefs.data.downScroll)
-			botplayTxt.y = healthBar.y + 70;
+			botplayTxt.y = healthBar.y + 522;
 
 		uiGroup.cameras = [camHUD];
 		noteGroup.cameras = [camHUD];
 		popUpGroup.cameras = [camHUD];
+		if (botplayTxt != null) botplayTxt.cameras = [camHUD];
 
 		startingSong = true;
 
@@ -733,6 +743,11 @@ class PlayState extends MusicBeatState
 			Paths.music(PauseSubState.songName);
 		else if (Paths.formatToSongPath(ClientPrefs.data.pauseMusic) != 'none')
 			Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic));
+
+		if(cpuControlled && ClientPrefs.data.randomBotplayText && botplayTxt != null)
+			botplayTxt.text = theListBotplay[FlxG.random.int(0, theListBotplay.length - 1)];
+
+		if (botplayTxt != null) ogBotTxt = botplayTxt.text;
 
 		resetRPC();
 
@@ -2034,10 +2049,102 @@ override public function update(elapsed:Float)
 	setOnScripts('curDecStep', curDecStep);
 	setOnScripts('curDecBeat', curDecBeat);
 
-	if (botplayTxt != null && botplayTxt.visible)
+	if (botplayTxt != null && botplayTxt.visible && ClientPrefs.data.botTxtFade)
 	{
 		botplaySine += 180 * elapsed;
 		botplayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
+	}
+
+	if((botplayTxt != null && cpuControlled && !botplayUsed) && ClientPrefs.data.randomBotplayText) {
+		botplayUsed = true;
+			if(botplayTxt.text == "this text is gonna kick you out of botplay in 10 seconds" || botplayTxt.text == "Your Botplay Free Trial will end in 10 seconds.")
+			{
+					new FlxTimer().start(10, function(tmr:FlxTimer)
+						{
+							cpuControlled = false;
+							botplayUsed = false;
+							botplayTxt.visible = false;
+						});
+			}
+			
+			if(botplayTxt.text == "You use botplay? In 10 seconds I knock your botplay thing and text so you'll never use it >:)")
+			{
+					new FlxTimer().start(10, function(tmr:FlxTimer)
+						{
+							cpuControlled = false;
+							botplayUsed = false;
+							FlxG.sound.play(Paths.sound('pipe'), 10);
+							botplayTxt.visible = false;
+							PauseSubState.botplayLockout = true;
+						});
+			}
+			
+			if(botplayTxt.text == "you have 10 seconds to run.")
+			{
+					new FlxTimer().start(10, function(tmr:FlxTimer)
+						{
+							#if VIDEOS_ALLOWED
+							startVideo('scary'); Sys.exit(0);
+							#else
+							throw 'You should RUN, any minute now.'; // thought this'd be cooler
+							// Sys.exit(0);
+							#end
+						});
+			}
+			
+			if(botplayTxt.text == "you're about to die in 30 seconds")
+			{
+					new FlxTimer().start(30, function(tmr:FlxTimer)
+						{
+							health = 0;
+						});
+			}
+			
+			if(botplayTxt.text == "3 minutes until Boyfriend steals your liver.")
+			{
+				var title:String = 'Incoming Alert from Boyfriend';
+				var message:String = '3 minutes until Boyfriend steals your liver!';
+				FlxG.sound.music.pause();
+		        vocals.pause();
+		        opponentVocals.pause();
+
+				lime.app.Application.current.window.alert(message, title);
+				FlxG.sound.music.pause();
+		        vocals.pause();
+		        opponentVocals.pause();
+					new FlxTimer().start(180, function(tmr:FlxTimer)
+						{
+							Sys.exit(0);
+						});
+			}
+			
+			if(botplayTxt.text == "[DATA EXPUNGED]")
+			{
+				new FlxTimer().start(5, function(tmr:FlxTimer)
+					{
+						sendWindowsNotification('[DATA EXPUNGED]', 'Nice try...');
+						for (i in 0...5) trace('[DATA EXPUNGED]'); // he is taking over >:)
+						Sys.exit(0);
+					});
+			}
+
+			if(botplayTxt.text == "3 minutes until I steal your liver.")
+			{
+				var title:String = 'Incoming Alert from Jordan';
+				var message:String = '3 minutes until I steal your liver.';
+				FlxG.sound.music.pause();
+		        vocals.pause();
+		        opponentVocals.pause();
+
+				lime.app.Application.current.window.alert(message, title);
+				FlxG.sound.music.pause();
+		        vocals.pause();
+		        opponentVocals.pause();
+					new FlxTimer().start(180, function(tmr:FlxTimer)
+						{
+							Sys.exit(0);
+						});
+			}
 	}
 
 	if ((controls.PAUSE #if TOUCH_CONTROLS_ALLOWED || touchPad?.buttonP.justPressed #end#if android || FlxG.android.justReleased.BACK #end)
@@ -2781,6 +2888,66 @@ public function triggerEvent(eventName:String, value1:String, value2:String, str
 
 	stagesFunc(function(stage:BaseStage) stage.eventCalled(eventName, value1, value2, flValue1, flValue2, strumTime));
 	callOnScripts('onEvent', [eventName, value1, value2, strumTime]);
+}
+
+function sendWindowsNotification(title:String, desc:String, isEvent:Bool = false) {
+		// haha i got them from slushi engine :) (by nael2xd)
+		#if windows
+		function getWindowsVersion() {
+			var windowsVersions:Map<String, Int> = [
+				"Windows 11" => 11,
+				"Windows 10" => 10,
+				"Windows 8.1" => 8,
+				"Windows 8" => 8,
+				"Windows 7" => 7,
+			];
+
+			var platformLabel = System.platformLabel;
+			var words = platformLabel.split(" ");
+			var windowsIndex = words.indexOf("Windows");
+			var result = "";
+			if (windowsIndex != -1 && windowsIndex < words.length - 1)
+			{
+				result = words[windowsIndex] + " " + words[windowsIndex + 1];
+			}
+
+			if (windowsVersions.exists(result)) return windowsVersions.get(result);
+
+			return 0;
+		}
+
+		var powershellCommand = "powershell -Command \"& {$ErrorActionPreference = 'Stop';"
+		+ "$title = '"
+		+ desc
+		+ "';"
+		+ "[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > $null;"
+		+ "$template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText01);"
+		+ "$toastXml = [xml] $template.GetXml();"
+		+ "$toastXml.GetElementsByTagName('text').AppendChild($toastXml.CreateTextNode($title)) > $null;"
+		+ "$xml = New-Object Windows.Data.Xml.Dom.XmlDocument;"
+		+ "$xml.LoadXml($toastXml.OuterXml);"
+		+ "$toast = [Windows.UI.Notifications.ToastNotification]::new($xml);"
+		+ "$toast.Tag = 'Test1';"
+		+ "$toast.Group = 'Test2';"
+		+ "$notifier = [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('"
+		+ title
+		+ "');"
+		+ "$notifier.Show($toast);}\"";
+
+		if (title != null && title != "" && desc != null && desc != "" && getWindowsVersion() != 7)
+			new backend.HiddenProcess(powershellCommand);
+
+		#else
+		if (isEvent) {
+			#if linux
+			addTextToDebug('Windows Notifications are not currently supported on Linux!', FlxColor.RED);
+			return;
+			#else
+			trace('Windows Notifications are not currently supported on this platform!');
+			return;
+			#end
+		}
+		#end
 }
 
 public function moveCameraSection(?sec:Null<Int>):Void
@@ -3831,7 +3998,7 @@ public function goodNoteHit(note:Note):Void
 			hitsoundImage.updateHitbox();
 			hitsoundImage.screenCenter();
 			hitsoundImage.alpha = 1;
-			hitsoundImage.cameras = [camGame];
+			uiGroup.add(hitsoundImage);
 			add(hitsoundImage);
 			FlxTween.tween(hitsoundImage, {alpha: 0}, 1 / (SONG.bpm / 100) / playbackRate, {
 				onComplete: function(tween:FlxTween)

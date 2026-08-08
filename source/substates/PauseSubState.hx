@@ -51,6 +51,8 @@ class PauseSubState extends MusicBeatSubstate
 	var cutscene_resetTxt:String = 'lol';
 	var cutscene_skipTxt:String = 'lol';
 
+	public static var botplayLockout:Bool = false;
+
 	public static var songName:String = null;
 
 	public function new(inCutscene:Bool = false, type:PauseType = PauseType.CUTSCENE)
@@ -72,6 +74,8 @@ class PauseSubState extends MusicBeatSubstate
 		controls.isInSubstate = true;
 		if (Difficulty.list.length < 2)
 			menuItemsOG.remove('Change Difficulty'); // No need to change difficulty if there is only one!
+
+		if(botplayLockout) menuItemsOG.remove('Toggle Botplay'); //you cant toggle it on MWAHAHAHAHAHA
 
 		if (PlayState.chartingMode)
 		{
