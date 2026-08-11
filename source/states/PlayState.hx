@@ -183,8 +183,11 @@ class PlayState extends MusicBeatState
 	public var combo:Int = 0;
 	public var maxCombo:Int = 0;
 
-	public var healthBar:Bar;
-	public var timeBar:Bar;
+	private var healthBarBG:AttachedSprite;
+	public var healthBar:FlxBar;
+	
+	private var timeBarBG:AttachedSprite;
+	public var timeBar:FlxBar;
 
 	var songPercent:Float = 0;
 
@@ -544,13 +547,27 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.data.timeBarType == 'Song Name')
 			timeTxt.text = SONG.song;
 
-		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), 'timeBar', function() return songPercent, 0, 1);
+		timeBarBG = new AttachedSprite('timeBar');
+		timeBarBG.x = timeTxt.x;
+		timeBarBG.y = timeTxt.y + (timeTxt.height / 4);
+		timeBarBG.scrollFactor.set();
+		timeBarBG.alpha = 0;
+		timeBarBG.visible = showTime;
+		timeBarBG.color = FlxColor.BLACK;
+		timeBarBG.xAdd = -4;
+		timeBarBG.yAdd = -4;
+		uiGroup.add(timeBarBG);
+
+		timeBar = new FlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this,
+			'songPercent', 0, 1);
 		timeBar.scrollFactor.set();
-		timeBar.screenCenter(X);
+		timeBar.createFilledBar(0xFF000000, 0xFFFFFFFF);
+		timeBar.numDivisions = 800; // How much lag this causes?? Should i tone it down to idk, 400 or 200?
 		timeBar.alpha = 0;
 		timeBar.visible = showTime;
 		uiGroup.add(timeBar);
 		uiGroup.add(timeTxt);
+		timeBarBG.sprTracker = timeBar;
 
 		noteGroup.add(strumLineNotes);
 
@@ -589,34 +606,40 @@ class PlayState extends MusicBeatState
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 		moveCameraSection();
 
-		healthBar = new Bar(0, FlxG.height * (!ClientPrefs.data.downScroll ? 0.89 : 0.11), 'healthBar', function()
-		{
-			if (ClientPrefs.data.vsliceSmoothBar)
-			{
-				healthLerp = FlxMath.lerp(healthLerp, health, 0.15);
-				return healthLerp;
-			}
-			return health;
-		}, 0, 2);
-		healthBar.screenCenter(X);
-		healthBar.leftToRight = false;
+		healthBarBG = new AttachedSprite('healthBar');
+		healthBarBG.y = FlxG.height * 0.89;
+		healthBarBG.screenCenter(X);
+		healthBarBG.scrollFactor.set();
+		healthBarBG.visible = !ClientPrefs.data.hideHud;
+		healthBarBG.xAdd = -4;
+		healthBarBG.yAdd = -4;
+		uiGroup.add(healthBarBG);
+		if (ClientPrefs.data.downScroll)
+			healthBarBG.y = 0.11 * FlxG.height;
+
+		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
+			'healthLerp', 0, 2);
 		healthBar.scrollFactor.set();
+		// healthBar
+		if (ClientPrefs.data.vsliceSmoothBar)
+			healthBar.numDivisions = 1000;
 		healthBar.visible = !ClientPrefs.data.hideHud;
 		healthBar.alpha = ClientPrefs.data.healthBarAlpha;
-		reloadHealthBarColors();
 		uiGroup.add(healthBar);
+		healthBarBG.sprTracker = healthBar;
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
-		iconP1.y = healthBar.y - 71;
+		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		iconP1.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
-		iconP2.y = healthBar.y - 71;
+		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
 		uiGroup.add(iconP2);
+		reloadHealthBarColors();
 
 		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -850,11 +873,11 @@ class PlayState extends MusicBeatState
 
 	public function reloadHealthBarColors()
 	{
-		if (ClientPrefs.data.vsliceLegacyBar)
-			healthBar.setColors(FlxColor.RED, FlxColor.LIME);
-		else
-			healthBar.setColors(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
-				FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
+		if(ClientPrefs.data.vsliceLegacyBar) healthBar.createFilledBar(FlxColor.RED,FlxColor.LIME);
+		else healthBar.createFilledBar(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
+			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
+
+		healthBar.updateBar();
 	}
 
 	public function addCharacterToList(newCharacter:String, type:Int)
@@ -2166,6 +2189,14 @@ override public function update(elapsed:Float)
 			openCharacterEditor();
 	}
 
+	FlxG.watch.add(this, "healthLerp");
+		if (ClientPrefs.data.vsliceSmoothBar)
+		{
+			healthLerp = FlxMath.lerp(healthLerp, health, 0.15);
+		}
+		else
+			healthLerp = health;
+
 	updateIconsScale(elapsed);
 	updateIconsPosition();
 
@@ -2424,8 +2455,15 @@ public dynamic function updateIconsScale(elapsed:Float)
 public dynamic function updateIconsPosition()
 {
 	var iconOffset:Int = 26;
-	iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-	iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+	var hpPrecent = ClientPrefs.data.vsliceSmoothBar ? healthBar.value * 50 : healthBar.percent;
+	iconP1.x = healthBar.x
+		+ (healthBar.width * (FlxMath.remapToRange(hpPrecent, 0, 100, 100, 0) * 0.01))
+		+ (150 * iconP1.scale.x - 150) / 2
+		- iconOffset;
+	iconP2.x = healthBar.x
+		+ (healthBar.width * (FlxMath.remapToRange(hpPrecent, 0, 100, 100, 0) * 0.01))
+		- (150 * iconP2.scale.x) / 2
+		- iconOffset * 2;
 }
 
 function openPauseMenu()

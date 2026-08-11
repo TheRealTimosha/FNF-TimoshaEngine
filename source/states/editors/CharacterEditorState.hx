@@ -2,6 +2,7 @@ package states.editors;
 
 import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
+import flixel.FlxSprite;
 import flixel.util.FlxDestroyUtil;
 import openfl.net.FileReference;
 import openfl.events.Event;
@@ -36,7 +37,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 	var cameraZoomText:FlxText;
 	var frameAdvanceText:FlxText;
 
-	var healthBar:Bar;
+	var healthBar:FlxSprite;
 	var healthIcon:HealthIcon;
 
 	var copiedOffset:Array<Float> = [0, 0];
@@ -114,8 +115,9 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
 
-		healthBar = new Bar(30, FlxG.height - 75);
+		healthBar = new FlxSprite(30, FlxG.height - 75).loadGraphic(Paths.image('healthBar'));
 		healthBar.scrollFactor.set();
+		add(healthBar);
 		healthBar.cameras = [camHUD];
 
 		healthIcon = new HealthIcon(character.healthIcon, false, false);
@@ -822,20 +824,17 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			else if (sender == healthColorStepperR)
 			{
 				character.healthColorArray[0] = Math.round(healthColorStepperR.value);
-				updateHealthBar();
-				unsavedProgress = true;
+				healthBar.color = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]);
 			}
 			else if (sender == healthColorStepperG)
 			{
 				character.healthColorArray[1] = Math.round(healthColorStepperG.value);
-				updateHealthBar();
-				unsavedProgress = true;
+				healthBar.color = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]);
 			}
 			else if (sender == healthColorStepperB)
 			{
 				character.healthColorArray[2] = Math.round(healthColorStepperB.value);
-				updateHealthBar();
-				unsavedProgress = true;
+				healthBar.color = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]);
 			}
 		}
 	}
@@ -1314,8 +1313,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		healthColorStepperR.value = character.healthColorArray[0];
 		healthColorStepperG.value = character.healthColorArray[1];
 		healthColorStepperB.value = character.healthColorArray[2];
-		healthBar.leftBar.color = healthBar.rightBar.color = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1],
-			character.healthColorArray[2]);
+        healthBar.color = FlxColor.fromRGB(character.healthColorArray[0], character.healthColorArray[1], character.healthColorArray[2]);
 		healthIcon.changeIcon(character.healthIcon, false);
 		updatePresence();
 	}
