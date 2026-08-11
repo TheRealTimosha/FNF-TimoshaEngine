@@ -37,6 +37,7 @@ import states.InitState;
 	public var randomBotplayText:Bool = false;
 	public var noteSkin:String = 'Default';
 	public var splashSkin:String = 'Psych';
+	public var healthBarStyle:String = 'Vanilla';
 	public var holdSkin:String = 'Vanilla';
 	public var botTxtFade:Bool = true;
 	public var watermarkStyle:String = 'Vanilla';

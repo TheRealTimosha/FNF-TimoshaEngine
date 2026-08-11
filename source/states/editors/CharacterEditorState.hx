@@ -115,7 +115,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
 
-		healthBar = new FlxSprite(30, FlxG.height - 75).loadGraphic(Paths.image('healthBar'));
+		healthBar = new FlxSprite(30, FlxG.height - 75).loadGraphic(Paths.image('editors/editorHealthBar'));
 		healthBar.scrollFactor.set();
 		add(healthBar);
 		healthBar.cameras = [camHUD];

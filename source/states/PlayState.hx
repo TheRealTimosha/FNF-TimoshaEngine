@@ -606,7 +606,48 @@ class PlayState extends MusicBeatState
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 		moveCameraSection();
 
-		healthBarBG = new AttachedSprite('healthBar');
+		switch(ClientPrefs.data.healthBarStyle)
+		{
+			case 'Dave Engine':
+				healthBarBG = new AttachedSprite('healthBars/healthBarDaveEngine');
+
+			case 'Dave Engine (Old)':
+				healthBarBG = new AttachedSprite('healthBars/healthBarDaveEngineOld');
+
+			case 'Doki Doki+':
+				healthBarBG = new AttachedSprite('healthBars/healthBarDokiDoki+');
+
+			case 'Screwed':
+				healthBarBG = new AttachedSprite('healthBars/healthBarScrewed');
+
+			case 'Rounded':
+				healthBarBG = new AttachedSprite('healthBars/healthBarRounded');
+
+			case 'Rounded 2':
+				healthBarBG = new AttachedSprite('healthBars/healthBarRounded2');
+
+			case 'Rainbow':
+				healthBarBG = new AttachedSprite('healthBars/healthBarRainbow');
+
+			case 'Crimson Edition':
+				healthBarBG = new AttachedSprite('healthBars/healthBarCrimsonEdition');
+
+			case 'Scooby Engine':
+				healthBarBG = new AttachedSprite('healthBars/healthBarScoobyEngine');
+
+			case 'Elenita':
+				healthBarBG = new AttachedSprite('healthBars/healthBarElenita');
+
+			case 'GMC':
+				healthBarBG = new AttachedSprite('healthBars/healthBarGMC');
+
+			case 'SXMD':
+				healthBarBG = new AttachedSprite('healthBars/healthBarSXMD');
+
+			default:
+				healthBarBG = new AttachedSprite('healthBar');
+		}
+		
 		healthBarBG.y = FlxG.height * 0.89;
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
@@ -625,7 +666,7 @@ class PlayState extends MusicBeatState
 			healthBar.numDivisions = 1000;
 		healthBar.visible = !ClientPrefs.data.hideHud;
 		healthBar.alpha = ClientPrefs.data.healthBarAlpha;
-		uiGroup.add(healthBar);
+		insert(members.indexOf(uiGroup), healthBar);
 		healthBarBG.sprTracker = healthBar;
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
@@ -692,6 +733,8 @@ class PlayState extends MusicBeatState
 		noteGroup.cameras = [camHUD];
 		popUpGroup.cameras = [camHUD];
 		if (botplayTxt != null) botplayTxt.cameras = [camHUD];
+		healthBar.cameras = [camHUD];
+
 
 		startingSong = true;
 

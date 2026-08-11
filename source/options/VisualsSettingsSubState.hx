@@ -138,6 +138,13 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			['Time Left', 'Time Elapsed', 'Song Name', 'Modern Time', 'Song Name + Time', 'Disabled']);
 		addOption(option);
 
+		var option:Option = new Option('Health Bar Style:',
+			"How would you like your Health Bar to look?",
+			'healthBarStyle',
+			STRING,
+			['Vanilla', 'Dave Engine', 'Dave Engine (Old)', 'Doki Doki+', 'Screwed', 'Rounded', 'Rounded 2', 'Rainbow', 'Crimson Edition', 'Scooby Engine', 'Elenita', 'GMC', 'SXMD']);
+		addOption(option);
+
 		var option:Option = new Option('Watermark Style:',
 			"How would you like your Watermark to look?",
 			'watermarkStyle',
