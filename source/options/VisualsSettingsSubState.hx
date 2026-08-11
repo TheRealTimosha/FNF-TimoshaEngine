@@ -138,6 +138,13 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			['Time Left', 'Time Elapsed', 'Song Name', 'Modern Time', 'Song Name + Time', 'Disabled']);
 		addOption(option);
 
+		var option:Option = new Option('Time Bar Style:',
+			"How would you like the Time Bar to look like?",
+			'timeBarStyle',
+			STRING,
+			['Vanilla', 'Kade Engine', 'VS Impostor', 'TGT V4', 'Dave Engine', 'Doki Doki+', 'Leather Engine', 'JS Engine']);
+		addOption(option);
+
 		var option:Option = new Option('Health Bar Style:',
 			"How would you like your Health Bar to look?",
 			'healthBarStyle',
