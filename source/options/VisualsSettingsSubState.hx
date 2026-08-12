@@ -149,7 +149,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			"How would you like your Health Bar to look?",
 			'healthBarStyle',
 			STRING,
-			['Vanilla', 'Dave Engine', 'Dave Engine (Old)', 'Doki Doki+', 'Screwed', 'Rounded', 'Rounded 2', 'Rainbow', 'Crimson Edition', 'Scooby Engine', 'Elenita', 'GMC', 'SXMD']);
+			['Vanilla', 'Dave Engine', 'Dave Engine (Old)', 'Doki Doki+', 'Screwed', 'Rounded', 'Rounded 2', 'Rainbow', 'Crimson Edition', 'Scooby Engine', 'Elenita', 'GMC', 'SXMD', 'But Bad']);
 		addOption(option);
 
 		var option:Option = new Option('Watermark Style:',

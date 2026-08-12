@@ -796,6 +796,9 @@ class PlayState extends MusicBeatState
 			case 'SXMD':
 				healthBarBG = new AttachedSprite('healthBars/healthBarSXMD');
 
+			case 'But Bad':
+				healthBarBG = new AttachedSprite('healthBars/healthBarButBad');
+
 			default:
 				healthBarBG = new AttachedSprite('healthBar');
 		}
@@ -818,7 +821,39 @@ class PlayState extends MusicBeatState
 			healthBar.numDivisions = 1000;
 		healthBar.visible = !ClientPrefs.data.hideHud;
 		healthBar.alpha = ClientPrefs.data.healthBarAlpha;
-		insert(members.indexOf(uiGroup), healthBar);
+		if (ClientPrefs.data.healthBarStyle != 'Dave Engine' && ClientPrefs.data.healthBarStyle != 'Dave Engine (Old)' && ClientPrefs.data.healthBarStyle != 'Screwed' && ClientPrefs.data.healthBarStyle != 'Rounded' && ClientPrefs.data.healthBarStyle != 'Rounded 2' && ClientPrefs.data.healthBarStyle != 'Scooby Engine' && ClientPrefs.data.healthBarStyle != 'Elenita' && ClientPrefs.data.healthBarStyle != 'GMC' && ClientPrefs.data.healthBarStyle != 'SXMD' && ClientPrefs.data.healthBarStyle != 'Crimson Edition') uiGroup.add(healthBar);
+		switch(ClientPrefs.data.healthBarStyle)
+		{
+			case 'Dave Engine':
+				insert(members.indexOf(uiGroup), healthBar);
+		
+			case 'Dave Engine (Old)':
+				insert(members.indexOf(uiGroup), healthBar);
+			
+			case 'Screwed':
+				insert(members.indexOf(uiGroup), healthBar);
+			
+			case 'Rounded':
+				insert(members.indexOf(uiGroup), healthBar);
+
+			case 'Rounded 2':
+				insert(members.indexOf(uiGroup), healthBar);
+
+			case 'Scooby Engine':
+				insert(members.indexOf(uiGroup), healthBar);
+			
+			case 'Elenita':
+				insert(members.indexOf(uiGroup), healthBar);
+			
+			case 'GMC':
+				insert(members.indexOf(uiGroup), healthBar);
+			
+			case 'SXMD':
+				insert(members.indexOf(uiGroup), healthBar);
+
+			case 'Crimson Edition':
+				insert(members.indexOf(uiGroup), healthBar);
+		}
 		healthBarBG.sprTracker = healthBar;
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
@@ -3313,6 +3348,7 @@ public function endSong()
 		}
 	}
 
+	timeBarBG.visible = false;
 	timeBar.visible = false;
 	timeTxt.visible = false;
 	canPause = false;
