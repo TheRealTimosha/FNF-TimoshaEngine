@@ -616,6 +616,7 @@ class PlayState extends MusicBeatState
 					timeBarBG.destroy();
 					timeBar.destroy();
 				}
+				
 				timeBarBG = new AttachedSprite('editors/editorHealthBar');
 				timeBarBG.x = timeTxt.x;
 				timeBarBG.y = timeTxt.y + (timeTxt.height / 8);
@@ -728,12 +729,96 @@ class PlayState extends MusicBeatState
 		uiGroup.add(timeTxt);
 		timeBarBG.sprTracker = timeBar;
 
-		noteGroup.add(strumLineNotes);
-
-		if(ClientPrefs.data.timeBarType == 'Song Name' && ClientPrefs.data.timeBarStyle == 'VS Impostor')
+		switch (ClientPrefs.data.timeBarStyle)
 		{
-			timeTxt.size = 14;
+			case 'Leather Engine':
+				timeTxt.y += 3;
+
+			case 'JS Engine':
+				timeTxt.y += 1;
+
+			case 'TGT V4':
+				timeTxt.y += 2;
+
+			case 'Kade Engine':
+			    timeTxt.y += 2;
+
+			case 'Dave Engine':
+				timeTxt.y -= 5;
+
+			case 'Doki Doki+':
+				timeTxt.y -= 1;
+
+			case 'VS Impostor':
+			    timeTxt.size = 14;
+				timeTxt.y -= 1;
 		}
+
+		if (ClientPrefs.data.timeBarType == 'Song Name')
+		{
+		switch (ClientPrefs.data.timeBarStyle)
+		{
+			case 'Leather Engine':
+				timeTxt.y += 0;
+
+			case 'JS Engine':
+				timeTxt.y += 0;
+
+			case 'TGT V4':
+				timeTxt.y -= 1;
+
+			case 'Kade Engine':
+			    timeTxt.y += 0;
+
+			case 'Dave Engine':
+				timeTxt.y -= 2;
+
+			case 'Doki Doki+':
+				timeTxt.y -= 1;
+
+			case 'VS Impostor':
+			    timeTxt.size = 14;
+				timeTxt.y -= 1;
+			
+			default:
+			    timeTxt.size = 24;
+			    timeTxt.y += 3;
+		}
+	    }
+
+		if (ClientPrefs.data.timeBarType == 'Song Name + Time')
+		{
+		switch (ClientPrefs.data.timeBarStyle)
+		{
+			case 'Leather Engine':
+				timeTxt.y += 0;
+
+			case 'JS Engine':
+				timeTxt.y += 0;
+
+			case 'TGT V4':
+				timeTxt.y -= 1;
+
+			case 'Kade Engine':
+			    timeTxt.y += 0;
+
+			case 'Dave Engine':
+				timeTxt.y -= 2;
+
+			case 'Doki Doki+':
+				timeTxt.y -= 1;
+
+			case 'VS Impostor':
+			    timeTxt.size = 14;
+				timeTxt.y += 1;
+			
+			default:
+			    timeTxt.size = 24;
+			    timeTxt.y += 3;
+		}
+		}
+
+		noteGroup.add(strumLineNotes);
 
 		generateSong();
 
