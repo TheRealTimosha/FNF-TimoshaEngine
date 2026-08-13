@@ -284,7 +284,10 @@ class Note extends FlxSprite
 			alpha = ClientPrefs.data.holdAlpha;
 			multAlpha = ClientPrefs.data.holdAlpha;
 			hitsoundDisabled = true;
-			if(ClientPrefs.data.downScroll) flipY = true;
+			if(ClientPrefs.data.downScroll) 
+				flipY = true;
+			
+			scale.y = 0.6;
 
 			offsetX += width / 2;
 			copyAngle = false;
@@ -292,6 +295,7 @@ class Note extends FlxSprite
 			animation.play(colArray[noteData % colArray.length] + 'holdend');
 
 			updateHitbox();
+			centerOffsets();
 
 			offsetX -= width / 2;
 
@@ -302,25 +306,27 @@ class Note extends FlxSprite
 			{
 				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
 
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
-				if(createdFrom != null && createdFrom.songSpeed != null) prevNote.scale.y *= createdFrom.songSpeed;
+				prevNote.scale.y = Conductor.stepCrochet / 100 * 1.058;
+				if (createdFrom != null && createdFrom.songSpeed != null)
+					prevNote.scale.y *= createdFrom.songSpeed;
 
-				if(PlayState.isPixelStage) {
-					prevNote.scale.y *= 1.19;
-					prevNote.scale.y *= (6 / height); //Auto adjust note size
+				if (PlayState.isPixelStage)
+				{
+					prevNote.scale.y *= 4.58;
+					prevNote.scale.y *= (6 / height); // Auto adjust note size
 				}
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
 
-			if(PlayState.isPixelStage)
+			if (PlayState.isPixelStage)
 			{
 				scale.y *= PlayState.daPixelZoom;
 				updateHitbox();
 			}
 			earlyHitMult = 0;
 		}
-		else if(!isSustainNote)
+		else if (!isSustainNote)
 		{
 			centerOffsets();
 			centerOrigin();
