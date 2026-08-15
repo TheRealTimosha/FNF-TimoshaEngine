@@ -286,8 +286,6 @@ class Note extends FlxSprite
 			hitsoundDisabled = true;
 			if(ClientPrefs.data.downScroll) 
 				flipY = true;
-			
-			scale.y = 0.6;
 
 			offsetX += width / 2;
 			copyAngle = false;
@@ -295,7 +293,6 @@ class Note extends FlxSprite
 			animation.play(colArray[noteData % colArray.length] + 'holdend');
 
 			updateHitbox();
-			centerOffsets();
 
 			offsetX -= width / 2;
 
@@ -306,14 +303,12 @@ class Note extends FlxSprite
 			{
 				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
 
-				prevNote.scale.y = Conductor.stepCrochet / 100 * 1.058;
-				if (createdFrom != null && createdFrom.songSpeed != null)
-					prevNote.scale.y *= createdFrom.songSpeed;
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
+				if(createdFrom != null && createdFrom.songSpeed != null) prevNote.scale.y *= createdFrom.songSpeed;
 
-				if (PlayState.isPixelStage)
-				{
-					prevNote.scale.y *= 4.58;
-					prevNote.scale.y *= (6 / height); // Auto adjust note size
+				if (PlayState.isPixelStage) {
+					prevNote.scale.y *= 1.19;
+					prevNote.scale.y *= (6 / height); //Auto adjust note size
 				}
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
@@ -336,7 +331,7 @@ class Note extends FlxSprite
 
 	public static function initializeGlobalRGBShader(noteData:Int)
 	{
-		if(globalRgbShaders[noteData] == null)
+		if (globalRgbShaders[noteData] == null)
 		{
 			var newRGB:RGBPalette = new RGBPalette();
 			var arr:Array<FlxColor> = (!PlayState.isPixelStage) ? ClientPrefs.data.arrowRGB[noteData] : ClientPrefs.data.arrowRGBPixel[noteData];
@@ -388,14 +383,14 @@ class Note extends FlxSprite
 		var customSkin:String = skin + skinPostfix;
 		var path:String = PlayState.isPixelStage ? 'pixelUI/' : '';
 		
-		if(customSkin == _lastValidChecked || Paths.fileExists('images/' + path + customSkin + '.png', IMAGE))
+		if (customSkin == _lastValidChecked || Paths.fileExists('images/' + path + customSkin + '.png', IMAGE))
 		{
 			skin = customSkin;
 			_lastValidChecked = customSkin;
 		}
 		else skinPostfix = '';
 
-		if(PlayState.isPixelStage) {
+		if (PlayState.isPixelStage) {
 			if(isSustainNote) {
 				var graphic = Paths.image('pixelUI/' + skinPixel + 'ENDS' + skinPostfix);
 				loadGraphic(graphic, true, Math.floor(graphic.width / 4), Math.floor(graphic.height / 2));
@@ -408,7 +403,7 @@ class Note extends FlxSprite
 			loadPixelNoteAnims();
 			antialiasing = false;
 
-			if(isSustainNote) {
+			if (isSustainNote) {
 				offsetX += _lastNoteOffX;
 				_lastNoteOffX = (width - 7) * (PlayState.daPixelZoom / 2);
 				offsetX -= _lastNoteOffX;
@@ -443,7 +438,8 @@ class Note extends FlxSprite
 		return skin;
 	}
 
-	function loadNoteAnims() {
+	function loadNoteAnims() 
+	{
 		if (colArray[noteData] == null)
 			return;
 
@@ -453,17 +449,19 @@ class Note extends FlxSprite
 			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end', 24, true);
 			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece', 24, true);
 		}
-		else animation.addByPrefix(colArray[noteData] + 'Scroll', colArray[noteData] + '0');
+		else 
+			animation.addByPrefix(colArray[noteData] + 'Scroll', colArray[noteData] + '0');
 
 		setGraphicSize(Std.int(width * 0.7));
 		updateHitbox();
 	}
 
-	function loadPixelNoteAnims() {
+	function loadPixelNoteAnims() 
+	{
 		if (colArray[noteData] == null)
 			return;
 
-		if(isSustainNote)
+		if (isSustainNote)
 		{
 			animation.add(colArray[noteData] + 'holdend', [noteData + 4], 24, true);
 			animation.add(colArray[noteData] + 'hold', [noteData], 24, true);
@@ -476,7 +474,8 @@ class Note extends FlxSprite
 		try{
 			@:privateAccess
 			animation.findByPrefix(animFrames, prefix); // adds valid frames to animFrames
-			if(animFrames.length < 1) return;
+			if (animFrames.length < 1) 
+				return;
 		}
 		catch (x) {return;}
 
@@ -501,7 +500,7 @@ class Note extends FlxSprite
 
 			if (!wasGoodHit && strumTime <= Conductor.songPosition)
 			{
-				if(!isSustainNote || (prevNote.wasGoodHit && !ignoreNote))
+				if (!isSustainNote || (prevNote.wasGoodHit && !ignoreNote))
 					wasGoodHit = true;
 			}
 		}
@@ -535,13 +534,13 @@ class Note extends FlxSprite
 		if (copyAngle)
 			angle = strumDirection - 90 + strumAngle + offsetAngle;
 
-		if(copyAlpha)
+		if (copyAlpha)
 			alpha = strumAlpha * multAlpha;
 
-		if(copyX)
+		if (copyX)
 			x = strumX + offsetX + Math.cos(angleDir) * distance;
 
-		if(copyY)
+		if (copyY)
 		{
 			y = strumY + offsetY + correctionOffset + Math.sin(angleDir) * distance;
 			if(myStrum.downScroll && isSustainNote)
@@ -553,7 +552,7 @@ class Note extends FlxSprite
 				y -= (frameHeight * scale.y) - (Note.swagWidth / 2);
 			}
 		}
-		if(copyScale){
+		if (copyScale) {
 			scale.x = strumScale.x;
 			if(!isSustainNote) scale.y = strumScale.y;
 			updateHitbox();
@@ -563,14 +562,14 @@ class Note extends FlxSprite
 	public function clipToStrumNote(myStrum:StrumNote)
 	{
 		var center:Float = myStrum.y + offsetY + Note.swagWidth / 2;
-		if((mustPress || !ignoreNote) && (wasGoodHit || (prevNote.wasGoodHit && !canBeHit)))
+		if ((mustPress || !ignoreNote) && (wasGoodHit || (prevNote.wasGoodHit && !canBeHit)))
 		{
 			var swagRect:FlxRect = clipRect;
-			if(swagRect == null) swagRect = new FlxRect(0, 0, frameWidth, frameHeight);
+			if (swagRect == null) swagRect = new FlxRect(0, 0, frameWidth, frameHeight);
 
 			if (myStrum.downScroll)
 			{
-				if(y - offset.y * scale.y + height >= center)
+				if (y - offset.y * scale.y + height >= center)
 				{
 					swagRect.width = frameWidth;
 					swagRect.height = (center - y) / scale.y;

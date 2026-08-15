@@ -232,7 +232,7 @@ class UserErrorSubstate extends MusicBeatSubstate
 			printSpaceToTrace();
             printToTrace(getLogger());
 			if (isCritical)
-				printToTrace('REPORT TO GITHUB.COM/MIKOLKA9144/TIMOSHA ENGINE');
+				printToTrace('REPORT TO GITHUB.COM/THEREALTIMOSHA/TIMOSHA ENGINE');
 			else
 				printToTrace('');
 			if (isCritical)
